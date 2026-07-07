@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Message } from "@/types";
+import { useTranslation } from "@/hooks/use-locale";
 
 interface ReplyQuoteProps {
   /** Sender label of the quoted message: "You" for our own messages,
@@ -26,6 +27,7 @@ export function ReplyQuote({
   onDismiss,
   onPrimary = false,
 }: ReplyQuoteProps) {
+  const { t } = useTranslation();
   const isChip = !!onDismiss;
   return (
     <div
@@ -63,7 +65,7 @@ export function ReplyQuote({
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="Cancel reply"
+          aria-label={t("inbox.replyQuote.cancelReply")}
           className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           <X className="h-3.5 w-3.5" />
@@ -73,23 +75,31 @@ export function ReplyQuote({
   );
 }
 
-/** Build the one-line preview text shown inside a reply quote. */
-export function buildReplyPreview(message: Message): string {
+/**
+ * Build the one-line preview text shown inside a reply quote.
+ * Takes `t` as a parameter since this is a plain function (not a
+ * component) and can't call the `useTranslation` hook itself — callers
+ * are components that already have `t` in scope.
+ */
+export function buildReplyPreview(
+  message: Message,
+  t: (key: string) => string,
+): string {
   if (message.content_text) return message.content_text;
   switch (message.content_type) {
     case "image":
-      return "[Image]";
+      return t("inbox.replyQuote.imagePreview");
     case "video":
-      return "[Video]";
+      return t("inbox.replyQuote.videoPreview");
     case "audio":
-      return "[Audio]";
+      return t("inbox.replyQuote.audioPreview");
     case "document":
-      return "[Document]";
+      return t("inbox.replyQuote.documentPreview");
     case "location":
-      return "[Location]";
+      return t("inbox.replyQuote.locationPreview");
     case "template":
-      return "[Template]";
+      return t("inbox.replyQuote.templatePreview");
     default:
-      return "[Message]";
+      return t("inbox.replyQuote.messagePreview");
   }
 }

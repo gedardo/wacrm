@@ -34,6 +34,7 @@ import { EditorHeader } from "./header";
 import { ValidationPanel } from "./validation-panel";
 import { NODE_META, nodeColors, type NodeType } from "./shared";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/use-locale";
 import type { FlowRow, FlowNodeRow } from "@/lib/flows/types";
 
 /**
@@ -59,6 +60,7 @@ interface Props {
 }
 
 export function FlowEditorShell({ initialFlow, initialNodes }: Props) {
+  const { t } = useTranslation();
   // Read the persisted choice in the useState initializer. Safe even
   // though this is a client component because the parent page only
   // mounts us AFTER a client-side fetch resolves — there's no SSR
@@ -103,33 +105,33 @@ export function FlowEditorShell({ initialFlow, initialNodes }: Props) {
           <div className="flex items-center gap-4 px-6 py-3.5">
             <div
               role="group"
-              aria-label="Editor view"
+              aria-label={t("flows.shell.editorViewAriaLabel")}
               className="inline-flex gap-0.5 rounded-lg border border-border bg-muted p-0.5"
             >
               <SegButton
                 active={effectiveView === "canvas"}
                 onClick={() => choose("canvas")}
                 icon={<GitFork className="h-3.5 w-3.5" />}
-                label="Canvas"
+                label={t("flows.shell.canvas")}
               />
               <SegButton
                 active={effectiveView === "list"}
                 onClick={() => choose("list")}
                 icon={<List className="h-3.5 w-3.5" />}
-                label="List"
+                label={t("flows.shell.list")}
               />
             </div>
             <div className="ml-auto hidden flex-wrap items-center gap-x-3.5 gap-y-1.5 lg:flex">
-              {LEGEND_TYPES.map((t) => (
+              {LEGEND_TYPES.map((nt) => (
                 <span
-                  key={t}
+                  key={nt}
                   className="inline-flex items-center gap-1.5 text-[11.5px] text-muted-foreground"
                 >
                   <span
                     className="h-2.5 w-2.5 rounded-full"
-                    style={{ background: nodeColors(t).solid }}
+                    style={{ background: nodeColors(nt).solid }}
                   />
-                  {NODE_META[t].label}
+                  {t(NODE_META[nt].labelKey)}
                 </span>
               ))}
             </div>

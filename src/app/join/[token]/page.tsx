@@ -51,6 +51,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useTranslation } from '@/hooks/use-locale';
 import { createClient } from '@/lib/supabase/client';
 
 interface PeekOk {
@@ -65,34 +66,35 @@ interface PeekFail {
 }
 type PeekResult = PeekOk | PeekFail;
 
-const ROLE_LABEL: Record<PeekOk['role'], string> = {
-  admin: 'Admin',
-  agent: 'Agent',
-  viewer: 'Viewer',
-};
-
-const FAIL_COPY: Record<PeekFail['reason'], { title: string; body: string }> = {
-  not_found: {
-    title: 'Invite not found',
-    body: 'This link doesn’t match a valid invitation. Double-check the URL or ask the person who invited you to send a new one.',
-  },
-  used: {
-    title: 'Invite already used',
-    body: 'This invitation has already been accepted. If that wasn’t you, ask the account admin to send a fresh link.',
-  },
-  expired: {
-    title: 'Invite expired',
-    body: 'This invitation has expired. Ask the account admin to send a new one — they take a few seconds to generate.',
-  },
-  server_error: {
-    title: 'Something went wrong',
-    body: 'We couldn’t verify this invitation right now. Try refreshing the page in a moment.',
-  },
-};
-
 export default function JoinPage() {
+  const { t } = useTranslation();
   const params = useParams<{ token: string }>();
   const token = params?.token;
+
+  const ROLE_LABEL: Record<PeekOk['role'], string> = {
+    admin: t('auth.join.roleAdmin'),
+    agent: t('auth.join.roleAgent'),
+    viewer: t('auth.join.roleViewer'),
+  };
+
+  const FAIL_COPY: Record<PeekFail['reason'], { title: string; body: string }> = {
+    not_found: {
+      title: t('auth.join.notFoundTitle'),
+      body: t('auth.join.notFoundBody'),
+    },
+    used: {
+      title: t('auth.join.usedTitle'),
+      body: t('auth.join.usedBody'),
+    },
+    expired: {
+      title: t('auth.join.expiredTitle'),
+      body: t('auth.join.expiredBody'),
+    },
+    server_error: {
+      title: t('auth.join.serverErrorTitle'),
+      body: t('auth.join.serverErrorBody'),
+    },
+  };
 
   const [peek, setPeek] = useState<PeekResult | null>(null);
   // Local auth probe — the AuthProvider lives inside the (dashboard)

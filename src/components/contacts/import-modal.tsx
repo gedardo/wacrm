@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
+import { useTranslation } from '@/hooks/use-locale';
 import {
   dedupeByPhone,
   isUniqueViolation,
@@ -79,6 +80,8 @@ function ImportPreviewTags({
   tagNames: string[];
   tagColorByKey: Map<string, string>;
 }) {
+  const { t } = useTranslation();
+
   if (tagNames.length === 0) {
     return <span className="text-muted-foreground">—</span>;
   }
@@ -98,7 +101,7 @@ function ImportPreviewTags({
               color,
               border: `1px solid ${color}${isKnown ? '55' : '30'}`,
             }}
-            title={isKnown ? name : `${name} (will be created on import)`}
+            title={isKnown ? name : t('contacts.tagWillBeCreated', { name })}
           >
             <span
               className="size-1.5 shrink-0 rounded-full"
@@ -124,6 +127,7 @@ export function ImportModal({
   onImported,
 }: ImportModalProps) {
   const supabase = createClient();
+  const { t } = useTranslation();
   const { accountId, canEditSettings } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -172,9 +176,7 @@ export function ImportModal({
     } = parseContactCsv(text);
 
     if (rows.length === 0) {
-      toast.error(
-        'No valid rows found. Ensure CSV has a "phone" column header.'
-      );
+      toast.error(t('contacts.noValidRowsFound'));
       setParsedRows([]);
       setHasTagsColumn(false);
       setHasCompanyColumn(false);
@@ -212,9 +214,9 @@ export function ImportModal({
         data: { session },
       } = await supabase.auth.getSession();
       const user = session?.user;
-      if (!user) throw new Error('Not authenticated');
+      if (!user) throw new Error(t('contacts.notAuthenticated'));
       if (!accountId)
-        throw new Error('Your profile is not linked to an account.');
+        throw new Error(t('contacts.notLinkedToAccount'));
 
       let imported = 0;
       let skipped = 0;
@@ -336,39 +338,61 @@ export function ImportModal({
           tagIdByKey
         );
       } catch {
-        toast.warning('Contacts imported, but some tag assignments failed.');
+        toast.warning(t('contacts.tagAssignmentsFailed'));
       }
 
       setResult({ imported, skipped, failed, tagsAssigned });
       if (imported > 0) {
         toast.success(
-          `${imported} contact${imported !== 1 ? 's' : ''} imported`
+          t(
+            imported === 1
+              ? 'contacts.importedCount.one'
+              : 'contacts.importedCount.other',
+            { count: imported }
+          )
         );
         onImported();
       }
       if (tagsAssigned > 0) {
         toast.success(
-          `${tagsAssigned} tag assignment${tagsAssigned !== 1 ? 's' : ''} applied`
+          t(
+            tagsAssigned === 1
+              ? 'contacts.tagAssignmentsAppliedCount.one'
+              : 'contacts.tagAssignmentsAppliedCount.other',
+            { count: tagsAssigned }
+          )
         );
       }
       if (skippedNames.length > 0) {
         const sample = skippedNames.slice(0, 3).join(', ');
         const more =
-          skippedNames.length > 3 ? ` (+${skippedNames.length - 3} more)` : '';
-        toast.info(
-          `Unknown tags skipped (create them in Settings first): ${sample}${more}`
-        );
+          skippedNames.length > 3
+            ? t('contacts.moreCount', { count: skippedNames.length - 3 })
+            : '';
+        toast.info(t('contacts.unknownTagsSkipped', { sample, more }));
       }
       if (skipped > 0) {
-        toast.info(`${skipped} duplicate${skipped !== 1 ? 's' : ''} skipped`);
+        toast.info(
+          t(
+            skipped === 1
+              ? 'contacts.duplicatesSkippedCount.one'
+              : 'contacts.duplicatesSkippedCount.other',
+            { count: skipped }
+          )
+        );
       }
       if (failed > 0) {
         toast.error(
-          `${failed} contact${failed !== 1 ? 's' : ''} failed to import`
+          t(
+            failed === 1
+              ? 'contacts.failedToImportCount.one'
+              : 'contacts.failedToImportCount.other',
+            { count: failed }
+          )
         );
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Import failed';
+      const message = err instanceof Error ? err.message : t('contacts.importFailed');
       toast.error(message);
     } finally {
       setImporting(false);
@@ -402,14 +426,14 @@ export function ImportModal({
         <div className="shrink-0 space-y-4 border-b border-border/80 px-6 pt-6 pb-5">
           <DialogHeader className="gap-1.5">
             <DialogTitle className="text-lg text-popover-foreground">
-              Import Contacts
+              {t('contacts.importContactsTitle')}
             </DialogTitle>
             <DialogDescription className="leading-relaxed text-muted-foreground">
-              Upload a CSV with a required{' '}
+              {t('contacts.importCsvIntro')}{' '}
               <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground">
                 phone
               </code>{' '}
-              column. Optional:{' '}
+              {t('contacts.importCsvColumnRequired')}{' '}
               <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground">
                 name
               </code>
@@ -425,7 +449,7 @@ export function ImportModal({
               <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground">
                 tags
               </code>{' '}
-              (comma-separated; quote multi-tag cells).
+              {t('contacts.importCsvColumnsNote')}
             </DialogDescription>
           </DialogHeader>
 
@@ -456,8 +480,12 @@ export function ImportModal({
                   {truncateFilename(file.name)}
                 </p>
                 <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
-                  {parsedRows.length} row{parsedRows.length !== 1 ? 's' : ''}{' '}
-                  ready
+                  {t(
+                    parsedRows.length === 1
+                      ? 'contacts.rowsReadyCount.one'
+                      : 'contacts.rowsReadyCount.other',
+                    { count: parsedRows.length }
+                  )}
                 </span>
               </>
             ) : (
@@ -466,10 +494,10 @@ export function ImportModal({
                   <Upload className="size-5 text-muted-foreground group-hover:text-foreground" />
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Click to choose a CSV file
+                  {t('contacts.clickToChooseFile')}
                 </p>
                 <p className="text-[11px] text-muted-foreground">
-                  .csv up to your browser limit
+                  {t('contacts.csvSizeLimit')}
                 </p>
               </>
             )}
@@ -489,15 +517,25 @@ export function ImportModal({
             <div className="space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-[11px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
-                  Preview · first {preview.length}
+                  {t('contacts.previewFirst', { count: preview.length })}
                 </p>
                 <div className="flex flex-wrap items-center gap-1.5">
                   {tagStats.rowsWithTags > 0 && (
                     <span className="inline-flex items-center gap-1 rounded-md bg-muted/90 px-2 py-0.5 text-[11px] text-muted-foreground">
                       <Tag className="text-primary/80 size-3" />
-                      {tagStats.unique} tag{tagStats.unique !== 1 ? 's' : ''} ·{' '}
-                      {tagStats.rowsWithTags} contact
-                      {tagStats.rowsWithTags !== 1 ? 's' : ''}
+                      {t(
+                        tagStats.unique === 1
+                          ? 'contacts.tagsCount.one'
+                          : 'contacts.tagsCount.other',
+                        { count: tagStats.unique }
+                      )}{' '}
+                      ·{' '}
+                      {t(
+                        tagStats.rowsWithTags === 1
+                          ? 'contacts.contactsCount.one'
+                          : 'contacts.contactsCount.other',
+                        { count: tagStats.rowsWithTags }
+                      )}
                     </span>
                   )}
                 </div>
@@ -509,22 +547,22 @@ export function ImportModal({
                     <thead>
                       <tr className="border-b border-border bg-background/60">
                         <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
-                          Phone
+                          {t('common.phone')}
                         </th>
                         <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
-                          Name
+                          {t('common.name')}
                         </th>
                         <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
-                          Email
+                          {t('common.email')}
                         </th>
                         {previewHasCompany && (
                           <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
-                            Company
+                            {t('contacts.company')}
                           </th>
                         )}
                         {previewHasTags && (
                           <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
-                            Tags
+                            {t('contacts.tags')}
                           </th>
                         )}
                       </tr>
@@ -579,8 +617,12 @@ export function ImportModal({
 
               {parsedRows.length > PREVIEW_LIMIT && (
                 <p className="text-center text-[11px] text-muted-foreground">
-                  + {parsedRows.length - PREVIEW_LIMIT} more row
-                  {parsedRows.length - PREVIEW_LIMIT !== 1 ? 's' : ''} not shown
+                  {t(
+                    parsedRows.length - PREVIEW_LIMIT === 1
+                      ? 'contacts.moreRowsNotShown.one'
+                      : 'contacts.moreRowsNotShown.other',
+                    { count: parsedRows.length - PREVIEW_LIMIT }
+                  )}
                 </p>
               )}
             </div>
@@ -588,31 +630,50 @@ export function ImportModal({
 
           {result && (
             <div className="rounded-xl border border-border bg-background/50 p-4">
-              <p className="text-sm font-medium text-popover-foreground">Import complete</p>
+              <p className="text-sm font-medium text-popover-foreground">{t('contacts.importComplete')}</p>
               <div className="mt-3 flex flex-wrap gap-3">
                 {result.imported > 0 && (
                   <div className="text-primary flex items-center gap-1.5 text-sm">
                     <CheckCircle className="size-4 shrink-0" />
-                    {result.imported} imported
+                    {t(
+                      result.imported === 1
+                        ? 'contacts.importedLabelCount.one'
+                        : 'contacts.importedLabelCount.other',
+                      { count: result.imported }
+                    )}
                   </div>
                 )}
                 {result.tagsAssigned > 0 && (
                   <div className="flex items-center gap-1.5 text-sm text-cyan-400">
                     <CheckCircle className="size-4 shrink-0" />
-                    {result.tagsAssigned} tag
-                    {result.tagsAssigned !== 1 ? 's' : ''} assigned
+                    {t(
+                      result.tagsAssigned === 1
+                        ? 'contacts.tagsAssignedLabelCount.one'
+                        : 'contacts.tagsAssignedLabelCount.other',
+                      { count: result.tagsAssigned }
+                    )}
                   </div>
                 )}
                 {result.skipped > 0 && (
                   <div className="flex items-center gap-1.5 text-sm text-amber-400">
                     <AlertTriangle className="size-4 shrink-0" />
-                    {result.skipped} skipped
+                    {t(
+                      result.skipped === 1
+                        ? 'contacts.skippedLabelCount.one'
+                        : 'contacts.skippedLabelCount.other',
+                      { count: result.skipped }
+                    )}
                   </div>
                 )}
                 {result.failed > 0 && (
                   <div className="flex items-center gap-1.5 text-sm text-red-400">
                     <XCircle className="size-4 shrink-0" />
-                    {result.failed} failed
+                    {t(
+                      result.failed === 1
+                        ? 'contacts.failedLabelCount.one'
+                        : 'contacts.failedLabelCount.other',
+                      { count: result.failed }
+                    )}
                   </div>
                 )}
               </div>
@@ -627,7 +688,7 @@ export function ImportModal({
             onClick={() => handleOpenChange(false)}
             className="border-border text-muted-foreground hover:bg-muted"
           >
-            {result ? 'Close' : 'Cancel'}
+            {result ? t('common.close') : t('common.cancel')}
           </Button>
           {!result && (
             <Button
@@ -637,8 +698,12 @@ export function ImportModal({
               className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {importing && <Loader2 className="size-4 animate-spin" />}
-              Import {parsedRows.length > 0 ? parsedRows.length : ''} contact
-              {parsedRows.length !== 1 ? 's' : ''}
+              {t(
+                parsedRows.length === 1
+                  ? 'contacts.importButtonCount.one'
+                  : 'contacts.importButtonCount.other',
+                { count: parsedRows.length }
+              )}
             </Button>
           )}
         </DialogFooter>

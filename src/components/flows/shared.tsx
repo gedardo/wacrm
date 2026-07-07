@@ -79,91 +79,91 @@ export interface BuilderNode {
 
 export type NodeCategory = 'messaging' | 'logic' | 'flow';
 
-/** Category labels + the order they render in the add-step menu. */
-export const NODE_CATEGORIES: { id: NodeCategory; label: string }[] = [
-  { id: 'messaging', label: 'Messaging' },
-  { id: 'logic', label: 'Logic & data' },
-  { id: 'flow', label: 'Flow control' },
+/** Category label keys + the order they render in the add-step menu. */
+export const NODE_CATEGORIES: { id: NodeCategory; labelKey: string }[] = [
+  { id: 'messaging', labelKey: 'flows.category.messaging' },
+  { id: 'logic', labelKey: 'flows.category.logic' },
+  { id: 'flow', labelKey: 'flows.category.flow' },
 ];
 
 export const NODE_META: Record<
   NodeType,
   {
-    label: string;
+    labelKey: string;
     icon: typeof Workflow;
     color: string;
-    blurb: string;
+    blurbKey: string;
     category: NodeCategory;
   }
 > = {
   start: {
-    label: 'Start',
+    labelKey: 'flows.node.start.label',
     icon: PlayCircle,
     color: 'text-emerald-400',
-    blurb: 'Entry point of the flow',
+    blurbKey: 'flows.node.start.blurb',
     category: 'flow',
   },
   send_message: {
-    label: 'Send message',
+    labelKey: 'flows.node.send_message.label',
     icon: MessageCircle,
     color: 'text-sky-400',
-    blurb: 'Sends a WhatsApp text message',
+    blurbKey: 'flows.node.send_message.blurb',
     category: 'messaging',
   },
   send_buttons: {
-    label: 'Send buttons',
+    labelKey: 'flows.node.send_buttons.label',
     icon: ListChecks,
     color: 'text-primary',
-    blurb: 'Sends quick-reply buttons',
+    blurbKey: 'flows.node.send_buttons.blurb',
     category: 'messaging',
   },
   send_list: {
-    label: 'Send list',
+    labelKey: 'flows.node.send_list.label',
     icon: ListPlus,
     color: 'text-indigo-400',
-    blurb: 'Sends a tappable list of options',
+    blurbKey: 'flows.node.send_list.blurb',
     category: 'messaging',
   },
   send_media: {
-    label: 'Send media',
+    labelKey: 'flows.node.send_media.label',
     icon: Paperclip,
     color: 'text-cyan-400',
-    blurb: 'Sends an image, video, or document',
+    blurbKey: 'flows.node.send_media.blurb',
     category: 'messaging',
   },
   collect_input: {
-    label: 'Collect input',
+    labelKey: 'flows.node.collect_input.label',
     icon: Inbox,
     color: 'text-teal-400',
-    blurb: 'Asks a question, saves the reply',
+    blurbKey: 'flows.node.collect_input.blurb',
     category: 'logic',
   },
   condition: {
-    label: 'If / else',
+    labelKey: 'flows.node.condition.label',
     icon: GitFork,
     color: 'text-fuchsia-400',
-    blurb: 'Branches on a rule',
+    blurbKey: 'flows.node.condition.blurb',
     category: 'logic',
   },
   set_tag: {
-    label: 'Tag contact',
+    labelKey: 'flows.node.set_tag.label',
     icon: Tag,
     color: 'text-pink-400',
-    blurb: 'Adds or removes a contact tag',
+    blurbKey: 'flows.node.set_tag.blurb',
     category: 'logic',
   },
   handoff: {
-    label: 'Handoff to agent',
+    labelKey: 'flows.node.handoff.label',
     icon: UserPlus,
     color: 'text-amber-400',
-    blurb: 'Hands the conversation to a human',
+    blurbKey: 'flows.node.handoff.blurb',
     category: 'flow',
   },
   end: {
-    label: 'End',
+    labelKey: 'flows.node.end.label',
     icon: Flag,
     color: 'text-muted-foreground',
-    blurb: 'Ends the flow',
+    blurbKey: 'flows.node.end.blurb',
     category: 'flow',
   },
 };
@@ -176,10 +176,10 @@ export const NODE_META: Record<
  */
 export function groupNodeTypesByCategory(
   types: NodeType[]
-): { id: NodeCategory; label: string; types: NodeType[] }[] {
-  return NODE_CATEGORIES.map(({ id, label }) => ({
+): { id: NodeCategory; labelKey: string; types: NodeType[] }[] {
+  return NODE_CATEGORIES.map(({ id, labelKey }) => ({
     id,
-    label,
+    labelKey,
     types: types.filter((t) => NODE_META[t].category === id),
   })).filter((group) => group.types.length > 0);
 }

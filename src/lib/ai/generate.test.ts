@@ -163,3 +163,95 @@ describe('generateReply — Anthropic', () => {
     expect(body.messages).toHaveLength(1)
   })
 })
+
+describe('generateReply — Gemini', () => {
+  it('calls the generateContent endpoint and parses candidates content text', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        okResponse({
+          candidates: [
+            {
+              content: {
+                parts: [{ text: 'Hello from Gemini!' }],
+                role: 'model',
+              },
+            },
+          ],
+        }),
+      )
+    vi.stubGlobal('fetch', fetchMock)
+
+    const res = await generateReply({
+      config: config({
+        provider: 'gemini',
+        model: 'gemini-2.5-flash',
+        apiKey: 'AIzaSyTest',
+      }),
+      systemPrompt: 'sys',
+      messages: [{ role: 'user', content: 'Hello' }],
+    })
+
+    expect(res).toEqual({ text: 'Hello from Gemini!', handoff: false })
+    const [url, opts] = fetchMock.mock.calls[0]
+    expect(url).toContain('generativelanguage.googleapis.com')
+    expect(url).toContain('key=AIzaSyTest')
+
+    const body = JSON.parse(opts.body)
+    expect(body.contents[0].role).toBe('user')
+    expect(body.contents[0].parts[0].text).toBe('Hello')
+  })
+
+  it('drops leading assistant turns and maps roles to user/model', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        okResponse({
+          candidates: [{ content: { parts: [{ text: 'ok' }] } }],
+        }),
+      )
+    vi.stubGlobal('fetch', fetchMock)
+
+    await generateReply({
+      config: config({ provider: 'gemini' }),
+      systemPrompt: 'sys',
+      messages: [
+        { role: 'assistant', content: 'Welcome!' },
+        { role: 'user', content: 'Hi' },
+      ],
+    })
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body)
+    expect(body.contents[0].role).toBe('user')
+    expect(body.contents).toHaveLength(1)
+  })
+})
+
+describe('generateReply — OpenRouter', () => {
+  it('calls the OpenRouter completions endpoint with custom headers', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        okResponse({
+          choices: [{ message: { content: 'Hello from OpenRouter!' } }],
+        }),
+      )
+    vi.stubGlobal('fetch', fetchMock)
+
+    const res = await generateReply({
+      config: config({
+        provider: 'openrouter',
+        model: 'google/gemini-2.5-flash',
+        apiKey: 'sk-or-test',
+      }),
+      systemPrompt: 'sys',
+      messages: [{ role: 'user', content: 'Hello' }],
+    })
+
+    expect(res).toEqual({ text: 'Hello from OpenRouter!', handoff: false })
+    const [url, opts] = fetchMock.mock.calls[0]
+    expect(url).toContain('openrouter.ai')
+    expect(opts.headers.Authorization).toBe('Bearer sk-or-test')
+    expect(opts.headers['HTTP-Referer']).toBe('https://github.com/gedardo/wacrm')
+  })
+})

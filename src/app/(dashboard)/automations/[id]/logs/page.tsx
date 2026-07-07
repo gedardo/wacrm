@@ -20,6 +20,7 @@ import type {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { formatRelative } from "@/lib/automations/trigger-meta"
+import { useTranslation } from "@/hooks/use-locale"
 
 export default function AutomationLogsPage({
   params,
@@ -28,6 +29,7 @@ export default function AutomationLogsPage({
 }) {
   const { id } = use(params)
   const router = useRouter()
+  const { t } = useTranslation()
 
   const [automation, setAutomation] = useState<Automation | null>(null)
   const [logs, setLogs] = useState<AutomationLog[] | null>(null)
@@ -56,7 +58,7 @@ export default function AutomationLogsPage({
         setAutomation(autRes.data as Automation | null)
         setLogs((logRes.data ?? []) as AutomationLog[])
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load logs")
+        setError(err instanceof Error ? err.message : t("automations.loadLogsFailed"))
       }
     }
     load()
@@ -67,7 +69,7 @@ export default function AutomationLogsPage({
       <div className="flex h-64 flex-col items-center justify-center gap-3">
         <p className="text-sm text-red-400">{error}</p>
         <Button variant="outline" onClick={() => router.push("/automations")}>
-          Back
+          {t("automations.back")}
         </Button>
       </div>
     )
@@ -88,21 +90,21 @@ export default function AutomationLogsPage({
           type="button"
           onClick={() => router.push("/automations")}
           className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          aria-label="Back"
+          aria-label={t("automations.back")}
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
         <div>
           <h1 className="text-2xl font-bold text-foreground">{automation.name}</h1>
-          <p className="mt-0.5 text-sm text-muted-foreground">Execution logs</p>
+          <p className="mt-0.5 text-sm text-muted-foreground">{t("automations.executionLogs")}</p>
         </div>
       </div>
 
       {logs.length === 0 ? (
         <div className="flex h-48 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card/40">
-          <p className="text-sm text-foreground">No executions yet</p>
+          <p className="text-sm text-foreground">{t("automations.noExecutionsTitle")}</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Trigger this automation to see runs here.
+            {t("automations.noExecutionsDescription")}
           </p>
         </div>
       ) : (
@@ -127,11 +129,16 @@ export default function AutomationLogsPage({
                   <StatusBadge status={log.status} />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium text-foreground">
-                      {log.contact?.name ?? log.contact?.phone ?? "Unknown contact"}
+                      {log.contact?.name ?? log.contact?.phone ?? t("automations.unknownContact")}
                     </div>
                     <div className="truncate text-xs text-muted-foreground">
-                      {log.trigger_event} · {log.steps_executed?.length ?? 0} step
-                      {log.steps_executed?.length === 1 ? "" : "s"}
+                      {log.trigger_event} ·{" "}
+                      {t(
+                        (log.steps_executed?.length ?? 0) === 1
+                          ? "automations.stepsCount.one"
+                          : "automations.stepsCount.other",
+                        { count: log.steps_executed?.length ?? 0 },
+                      )}
                     </div>
                   </div>
                   <div className="text-xs text-muted-foreground">
@@ -150,7 +157,7 @@ export default function AutomationLogsPage({
                         <StepRow key={i} result={r} />
                       ))}
                       {(log.steps_executed ?? []).length === 0 && (
-                        <li className="text-xs text-muted-foreground">No steps recorded.</li>
+                        <li className="text-xs text-muted-foreground">{t("automations.noStepsRecorded")}</li>
                       )}
                     </ul>
                   </div>
@@ -165,6 +172,7 @@ export default function AutomationLogsPage({
 }
 
 function StatusBadge({ status }: { status: AutomationLog["status"] }) {
+  const { t } = useTranslation()
   const classes =
     status === "success"
       ? "border-primary/30 bg-primary/10 text-primary"
@@ -178,7 +186,7 @@ function StatusBadge({ status }: { status: AutomationLog["status"] }) {
         classes,
       )}
     >
-      {status}
+      {t(`automations.status.${status}`)}
     </span>
   )
 }
