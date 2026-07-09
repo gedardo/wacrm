@@ -148,4 +148,5 @@ export const inbox: Record<keyof typeof inboxEn, string> = {
   "inbox.contactSidebar.noDeals": "Sin negocios",
   "inbox.contactSidebar.notes": "Notas",
   "inbox.contactSidebar.addNotePlaceholder": "Agregá una nota...",
+  "inbox.sendMessagesGateReason": "enviar mensajes",
 };

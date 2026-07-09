@@ -155,4 +155,6 @@ export const contacts: Record<keyof typeof contactsEn, string> = {
   "contacts.failedLabelCount.other": "{{count}} fallidos",
   "contacts.importButtonCount.one": "Importar {{count}} contacto",
   "contacts.importButtonCount.other": "Importar {{count}} contactos",
+  "contacts.addOrImportGateReason": "agregar o importar contactos",
+  "contacts.deleteGateReason": "eliminar contactos",
 };

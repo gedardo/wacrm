@@ -44,4 +44,5 @@ export const common = {
   "common.yesterday": "Yesterday",
   "common.switchToLightMode": "Switch to light mode",
   "common.switchToDarkMode": "Switch to dark mode",
+  "common.readOnlyCantAction": "Read-only — your role can't {{action}}",
 } as const;

@@ -9,6 +9,8 @@ import { automations } from "./automations";
 import { broadcasts } from "./broadcasts";
 import { flows } from "./flows";
 import { agentsNotifications } from "./agents-notifications";
+import { settingsAccount } from "./settings-account";
+import { settingsConfig } from "./settings-config";
 
 export const en: Record<string, string> = {
   ...common,
@@ -22,4 +24,6 @@ export const en: Record<string, string> = {
   ...broadcasts,
   ...flows,
   ...agentsNotifications,
+  ...settingsAccount,
+  ...settingsConfig,
 };

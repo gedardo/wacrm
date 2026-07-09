@@ -5,7 +5,7 @@ export const automations: Record<keyof typeof automationsEn, string> = {
   "automations.title": "Automatizaciones",
   "automations.subtitle": "Creá workflows que reaccionan automáticamente a eventos de WhatsApp®.",
   "automations.createButton": "Crear automatización",
-  "automations.createGateReason": "create automations",
+  "automations.createGateReason": "crear automatizaciones",
   "automations.quickStartTemplates": "Plantillas de inicio rápido",
   "automations.emptyTitle": "Todavía no hay automatizaciones",
   "automations.emptyDescription": "Elegí una plantilla arriba o creá una desde cero.",

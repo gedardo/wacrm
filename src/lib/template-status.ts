@@ -10,7 +10,8 @@
 import type { MessageTemplateStatus } from '@/types';
 
 export interface TemplateStatusDisplay {
-  label: string;
+  /** Dotted i18n key — resolve with `t(status.labelKey)` in the caller. */
+  labelKey: string;
   classes: string;
 }
 
@@ -19,35 +20,35 @@ export const templateStatusConfig: Record<
   TemplateStatusDisplay
 > = {
   DRAFT: {
-    label: 'Draft',
+    labelKey: 'settings.templates.status.DRAFT',
     classes: 'bg-slate-600/20 text-muted-foreground border-slate-600/30',
   },
   PENDING: {
-    label: 'Pending',
+    labelKey: 'settings.templates.status.PENDING',
     classes: 'bg-yellow-600/20 text-yellow-400 border-yellow-600/30',
   },
   APPROVED: {
-    label: 'Approved',
+    labelKey: 'settings.templates.status.APPROVED',
     classes: 'bg-primary/20 text-primary border-primary/30',
   },
   REJECTED: {
-    label: 'Rejected',
+    labelKey: 'settings.templates.status.REJECTED',
     classes: 'bg-red-600/20 text-red-400 border-red-600/30',
   },
   PAUSED: {
-    label: 'Paused',
+    labelKey: 'settings.templates.status.PAUSED',
     classes: 'bg-orange-600/20 text-orange-400 border-orange-600/30',
   },
   DISABLED: {
-    label: 'Disabled',
+    labelKey: 'settings.templates.status.DISABLED',
     classes: 'bg-red-900/30 text-red-500 border-red-900/40',
   },
   IN_APPEAL: {
-    label: 'In Appeal',
+    labelKey: 'settings.templates.status.IN_APPEAL',
     classes: 'bg-blue-600/20 text-blue-400 border-blue-600/30',
   },
   PENDING_DELETION: {
-    label: 'Pending Deletion',
+    labelKey: 'settings.templates.status.PENDING_DELETION',
     classes: 'bg-slate-700/30 text-muted-foreground border-slate-700/40',
   },
 };

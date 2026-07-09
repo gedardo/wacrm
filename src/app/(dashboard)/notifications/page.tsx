@@ -167,9 +167,9 @@ export default function NotificationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Notifications</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('notifications.title')}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Conversations other teammates assign to you show up here.
+            {t('notifications.description')}
           </p>
         </div>
         <Button
@@ -243,7 +243,7 @@ export default function NotificationsPage() {
                       </span>
                       {isUnread && (
                         <span
-                          aria-label="Unread"
+                          aria-label={t('notifications.unread')}
                           className="h-2 w-2 flex-shrink-0 rounded-full bg-primary"
                         />
                       )}

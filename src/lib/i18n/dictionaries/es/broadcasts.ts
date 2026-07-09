@@ -158,4 +158,5 @@ export const broadcasts: Record<keyof typeof broadcastsEn, string> = {
   "broadcasts.detail.csv.deliveredAt": "Entregado el",
   "broadcasts.detail.csv.readAt": "Leído el",
   "broadcasts.detail.csv.repliedAt": "Respondido el",
+  "broadcasts.createGateReason": "crear difusiones",
 } as const;

@@ -108,4 +108,6 @@ export const pipelines = {
   "pipelines.pipelineDeletedToast": "Pipeline deleted",
   "pipelines.dragToReorderAria": "Drag to reorder",
   "pipelines.changeColorAria": "Change color",
+  "pipelines.createPipelineGateReason": "create pipelines",
+  "pipelines.createDealGateReason": "create deals",
 } as const;

@@ -46,4 +46,5 @@ export const common: Record<keyof typeof commonEn, string> = {
   "common.yesterday": "Ayer",
   "common.switchToLightMode": "Cambiar a modo claro",
   "common.switchToDarkMode": "Cambiar a modo oscuro",
+  "common.readOnlyCantAction": "Solo lectura — tu rol no puede {{action}}",
 };

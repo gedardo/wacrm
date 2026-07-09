@@ -146,4 +146,5 @@ export const inbox = {
   "inbox.contactSidebar.noDeals": "No deals",
   "inbox.contactSidebar.notes": "Notes",
   "inbox.contactSidebar.addNotePlaceholder": "Add a note...",
+  "inbox.sendMessagesGateReason": "send messages",
 } as const;

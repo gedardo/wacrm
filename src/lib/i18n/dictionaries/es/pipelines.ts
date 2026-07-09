@@ -111,4 +111,6 @@ export const pipelines: Record<keyof typeof pipelinesEn, string> = {
   "pipelines.pipelineDeletedToast": "Pipeline eliminado",
   "pipelines.dragToReorderAria": "Arrastrar para reordenar",
   "pipelines.changeColorAria": "Cambiar color",
+  "pipelines.createPipelineGateReason": "crear pipelines",
+  "pipelines.createDealGateReason": "crear negocios",
 };

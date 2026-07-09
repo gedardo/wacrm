@@ -156,4 +156,5 @@ export const broadcasts = {
   "broadcasts.detail.csv.deliveredAt": "Delivered At",
   "broadcasts.detail.csv.readAt": "Read At",
   "broadcasts.detail.csv.repliedAt": "Replied At",
+  "broadcasts.createGateReason": "create broadcasts",
 } as const;

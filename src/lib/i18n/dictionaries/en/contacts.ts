@@ -153,4 +153,6 @@ export const contacts = {
   "contacts.failedLabelCount.other": "{{count}} failed",
   "contacts.importButtonCount.one": "Import {{count}} contact",
   "contacts.importButtonCount.other": "Import {{count}} contacts",
+  "contacts.addOrImportGateReason": "add or import contacts",
+  "contacts.deleteGateReason": "delete contacts",
 } as const;

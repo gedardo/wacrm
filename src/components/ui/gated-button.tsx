@@ -49,6 +49,7 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/use-locale";
 
 interface GatedButtonProps extends Omit<ComponentProps<typeof Button>, "title"> {
   /** False → button is disabled and the wrapper span shows the
@@ -56,9 +57,10 @@ interface GatedButtonProps extends Omit<ComponentProps<typeof Button>, "title"> 
    *  without the prop is just a Button. */
   canAct?: boolean;
   /** Verb phrase that completes the sentence
-   *  `"Read-only — your role can't <gateReason>"`. Provided
-   *  per-call so each CTA can name what it does ("create flows",
-   *  "send messages", "add contacts"). */
+   *  `t("common.readOnlyCantAction", { action: gateReason })`.
+   *  Provided per-call so each CTA can name what it does — pass an
+   *  already-translated phrase (e.g. `t("flows.createGateReason")`)
+   *  so the whole sentence renders in one language, not a mix. */
   gateReason?: string;
   /** Optional fallback title for the non-gated case. */
   title?: string;
@@ -74,9 +76,10 @@ export function GatedButton({
   children,
   ...rest
 }: GatedButtonProps) {
+  const { t } = useTranslation();
   const effectivelyDisabled = disabled || !canAct;
   const tooltip = !canAct && gateReason
-    ? `Read-only — your role can't ${gateReason}`
+    ? t("common.readOnlyCantAction", { action: gateReason })
     : title;
 
   return (
