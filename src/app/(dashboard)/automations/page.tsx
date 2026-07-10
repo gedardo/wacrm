@@ -194,8 +194,8 @@ export default function AutomationsPage() {
                   <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary/15">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div className="text-sm font-semibold text-foreground">{tmpl.name}</div>
-                  <p className="mt-1 text-xs text-muted-foreground">{tmpl.description}</p>
+                  <div className="text-sm font-semibold text-foreground">{t(tmpl.nameKey)}</div>
+                  <p className="mt-1 text-xs text-muted-foreground">{t(tmpl.descriptionKey)}</p>
                 </button>
               )
             })}
@@ -315,7 +315,7 @@ function AutomationCard({
                 meta.pillClass,
               )}
             >
-              {meta.label}
+              {t(meta.labelKey)}
             </span>
             <span className="tabular-nums">
               {t(
@@ -326,7 +326,7 @@ function AutomationCard({
               )}
             </span>
             <span aria-hidden>·</span>
-            <span>{t("automations.lastRun", { time: formatRelative(automation.last_executed_at) })}</span>
+            <span>{t("automations.lastRun", { time: formatRelative(automation.last_executed_at, t) })}</span>
           </div>
         </button>
 

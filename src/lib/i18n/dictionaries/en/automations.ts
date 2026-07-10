@@ -164,4 +164,34 @@ export const automations = {
   "automations.previewPickTemplate": "pick a template",
   "automations.previewNoUrl": "no url",
   "automations.previewConditionWhen": "when {{subject}}",
+
+  // ---- Trigger pill labels (list-row badge, shorter than the builder's triggerType.*) ----
+  "automations.triggerPillLabel.new_message_received": "New Message",
+  "automations.triggerPillLabel.first_inbound_message": "First Message from Contact",
+  "automations.triggerPillLabel.keyword_match": "Keyword Match",
+  "automations.triggerPillLabel.new_contact_created": "New Contact",
+  "automations.triggerPillLabel.conversation_assigned": "Conversation Assigned",
+  "automations.triggerPillLabel.tag_added": "Tag Added",
+  "automations.triggerPillLabel.time_based": "Time-Based",
+
+  // ---- Relative time (formatRelative) ----
+  "automations.relative.never": "never",
+  "automations.relative.justNow": "just now",
+  "automations.relative.minutesAgo": "{{count}}m ago",
+  "automations.relative.hoursAgo": "{{count}}h ago",
+  "automations.relative.daysAgo": "{{count}}d ago",
+
+  // ---- Quick-start template content ----
+  "automations.template.welcomeMessage.name": "Welcome Message",
+  "automations.template.welcomeMessage.description": "Auto-reply to first-time contacts with a greeting.",
+  "automations.template.welcomeMessage.step1Text": "Hi! 👋 Thanks for reaching out. We'll get back to you shortly.",
+  "automations.template.outOfOffice.name": "Out of Office",
+  "automations.template.outOfOffice.description": "Auto-reply during off-hours so nobody is left waiting.",
+  "automations.template.outOfOffice.step2Text": "Thanks for your message! Our team is offline right now (9am–6pm) and will reply first thing tomorrow.",
+  "automations.template.leadQualifier.name": "Lead Qualifier",
+  "automations.template.leadQualifier.description": "Ask qualification questions to filter inbound leads.",
+  "automations.template.leadQualifier.step1Text": "Great — happy to help with pricing! Quick question: roughly how many seats are you looking for?",
+  "automations.template.followUpReminder.name": "Follow-up Reminder",
+  "automations.template.followUpReminder.description": "Send a nudge if a contact has not replied within 24 hours.",
+  "automations.template.followUpReminder.step2Text": "Just circling back — did you have any other questions for us? Happy to help!",
 } as const;

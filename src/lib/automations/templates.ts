@@ -14,6 +14,10 @@ export type TemplateSlug =
 export interface TemplateStepSeed {
   step_type: AutomationStepType
   step_config: AutomationStepConfig
+  /** When set, the caller should overwrite `step_config.text` with
+   *  `t(textKey)` so the seeded automation content matches the active
+   *  locale instead of the English fallback baked into `step_config`. */
+  textKey?: string
   branch?: 'yes' | 'no' | null
   /** Index (within this seed list) of the Condition parent, if nested. */
   parent_index?: number | null
@@ -21,8 +25,8 @@ export interface TemplateStepSeed {
 
 export interface AutomationTemplateDefinition {
   slug: TemplateSlug
-  name: string
-  description: string
+  nameKey: string
+  descriptionKey: string
   trigger_type: AutomationTriggerType
   trigger_config: AutomationTriggerConfig
   steps: TemplateStepSeed[]
@@ -31,8 +35,8 @@ export interface AutomationTemplateDefinition {
 export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefinition> = {
   welcome_message: {
     slug: 'welcome_message',
-    name: 'Welcome Message',
-    description: 'Auto-reply to first-time contacts with a greeting.',
+    nameKey: 'automations.template.welcomeMessage.name',
+    descriptionKey: 'automations.template.welcomeMessage.description',
     // first_inbound_message (added in PR #33) catches both brand-new
     // contacts AND manually-added/imported contacts on their first-ever
     // reply, which is what a user setting up a "welcome" automation
@@ -46,6 +50,7 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
         step_config: {
           text: "Hi! 👋 Thanks for reaching out. We'll get back to you shortly.",
         },
+        textKey: 'automations.template.welcomeMessage.step1Text',
       },
       {
         step_type: 'add_tag',
@@ -55,8 +60,8 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
   },
   out_of_office: {
     slug: 'out_of_office',
-    name: 'Out of Office',
-    description: 'Auto-reply during off-hours so nobody is left waiting.',
+    nameKey: 'automations.template.outOfOffice.name',
+    descriptionKey: 'automations.template.outOfOffice.description',
     trigger_type: 'new_message_received',
     trigger_config: {},
     steps: [
@@ -73,6 +78,7 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
           text:
             "Thanks for your message! Our team is offline right now (9am–6pm) and will reply first thing tomorrow.",
         },
+        textKey: 'automations.template.outOfOffice.step2Text',
         parent_index: 0,
         branch: 'yes',
       },
@@ -80,8 +86,8 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
   },
   lead_qualifier: {
     slug: 'lead_qualifier',
-    name: 'Lead Qualifier',
-    description: 'Ask qualification questions to filter inbound leads.',
+    nameKey: 'automations.template.leadQualifier.name',
+    descriptionKey: 'automations.template.leadQualifier.description',
     trigger_type: 'keyword_match',
     trigger_config: {
       keywords: ['pricing', 'quote', 'buy'],
@@ -94,6 +100,7 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
           text:
             "Great — happy to help with pricing! Quick question: roughly how many seats are you looking for?",
         },
+        textKey: 'automations.template.leadQualifier.step1Text',
       },
       {
         step_type: 'wait',
@@ -107,8 +114,8 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
   },
   follow_up_reminder: {
     slug: 'follow_up_reminder',
-    name: 'Follow-up Reminder',
-    description: 'Send a nudge if a contact has not replied within 24 hours.',
+    nameKey: 'automations.template.followUpReminder.name',
+    descriptionKey: 'automations.template.followUpReminder.description',
     trigger_type: 'new_message_received',
     trigger_config: {},
     steps: [
@@ -122,6 +129,7 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
           text:
             "Just circling back — did you have any other questions for us? Happy to help!",
         },
+        textKey: 'automations.template.followUpReminder.step2Text',
       },
     ],
   },

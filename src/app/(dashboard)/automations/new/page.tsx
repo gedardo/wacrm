@@ -9,29 +9,33 @@ import {
   type BuilderStep,
 } from "@/components/automations/automation-builder"
 import { AUTOMATION_TEMPLATES, type TemplateSlug } from "@/lib/automations/templates"
+import { useTranslation } from "@/hooks/use-locale"
 import type { AutomationStepType, AutomationTriggerType } from "@/types"
 
 export default function NewAutomationPage() {
   const params = useSearchParams()
   const template = params.get("template") as TemplateSlug | null
+  const { t } = useTranslation()
 
   const initial: BuilderInitial = useMemo(() => {
     if (template && AUTOMATION_TEMPLATES[template]) {
-      const t = AUTOMATION_TEMPLATES[template]
+      const tmpl = AUTOMATION_TEMPLATES[template]
       const steps = expandFromSeeds(
-        t.steps.map((seed, idx) => ({
+        tmpl.steps.map((seed, idx) => ({
           index: idx,
           step_type: seed.step_type,
-          step_config: seed.step_config as Record<string, unknown>,
+          step_config: seed.textKey
+            ? { ...seed.step_config, text: t(seed.textKey) }
+            : (seed.step_config as Record<string, unknown>),
           branch: seed.branch ?? null,
           parent_index: seed.parent_index ?? null,
         })),
       )
       return {
-        name: t.name,
-        description: t.description,
-        trigger_type: t.trigger_type,
-        trigger_config: t.trigger_config as Record<string, unknown>,
+        name: t(tmpl.nameKey),
+        description: t(tmpl.descriptionKey),
+        trigger_type: tmpl.trigger_type,
+        trigger_config: tmpl.trigger_config as Record<string, unknown>,
         is_active: false,
         steps,
       }
@@ -44,7 +48,7 @@ export default function NewAutomationPage() {
       is_active: false,
       steps: [],
     }
-  }, [template])
+  }, [template, t])
 
   return <AutomationBuilder initial={initial} />
 }

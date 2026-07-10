@@ -166,4 +166,34 @@ export const automations: Record<keyof typeof automationsEn, string> = {
   "automations.previewPickTemplate": "elegí una plantilla",
   "automations.previewNoUrl": "sin URL",
   "automations.previewConditionWhen": "cuando {{subject}}",
+
+  // ---- Trigger pill labels (list-row badge, shorter than the builder's triggerType.*) ----
+  "automations.triggerPillLabel.new_message_received": "Mensaje nuevo",
+  "automations.triggerPillLabel.first_inbound_message": "Primer mensaje del contacto",
+  "automations.triggerPillLabel.keyword_match": "Coincidencia de palabra clave",
+  "automations.triggerPillLabel.new_contact_created": "Contacto nuevo",
+  "automations.triggerPillLabel.conversation_assigned": "Conversación asignada",
+  "automations.triggerPillLabel.tag_added": "Etiqueta agregada",
+  "automations.triggerPillLabel.time_based": "Basado en tiempo",
+
+  // ---- Relative time (formatRelative) ----
+  "automations.relative.never": "nunca",
+  "automations.relative.justNow": "recién",
+  "automations.relative.minutesAgo": "hace {{count}}m",
+  "automations.relative.hoursAgo": "hace {{count}}h",
+  "automations.relative.daysAgo": "hace {{count}}d",
+
+  // ---- Quick-start template content ----
+  "automations.template.welcomeMessage.name": "Mensaje de bienvenida",
+  "automations.template.welcomeMessage.description": "Respondé automáticamente a contactos nuevos con un saludo.",
+  "automations.template.welcomeMessage.step1Text": "¡Hola! 👋 Gracias por escribirnos. Te vamos a responder en breve.",
+  "automations.template.outOfOffice.name": "Fuera de oficina",
+  "automations.template.outOfOffice.description": "Respondé automáticamente fuera de horario para que nadie quede esperando.",
+  "automations.template.outOfOffice.step2Text": "¡Gracias por tu mensaje! Nuestro equipo está desconectado en este momento (9 a 18 h) y te va a responder a primera hora mañana.",
+  "automations.template.leadQualifier.name": "Calificador de leads",
+  "automations.template.leadQualifier.description": "Hacé preguntas de calificación para filtrar los leads entrantes.",
+  "automations.template.leadQualifier.step1Text": "¡Genial, encantados de ayudarte con los precios! Una pregunta rápida: ¿aproximadamente cuántos usuarios necesitás?",
+  "automations.template.followUpReminder.name": "Recordatorio de seguimiento",
+  "automations.template.followUpReminder.description": "Enviá un recordatorio si un contacto no respondió en las últimas 24 horas.",
+  "automations.template.followUpReminder.step2Text": "Retomando el contacto: ¿tenías alguna otra pregunta para nosotros? Encantados de ayudarte.",
 } as const;

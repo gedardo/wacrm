@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/automations/admin-client'
 import { getTemplate } from '@/lib/automations/templates'
+import { automations as automationsEn } from '@/lib/i18n/dictionaries/en/automations'
 import { insertSteps, type BuilderStepInput } from '@/lib/automations/steps-tree'
 import {
   validateStepsForActivation,
@@ -60,8 +61,13 @@ export async function POST(request: Request) {
   if (template && (!steps || steps.length === 0)) {
     const t = getTemplate(template)
     if (t) {
-      effectiveName = effectiveName ?? t.name
-      effectiveDescription = effectiveDescription ?? t.description
+      // Server-side fallback for programmatic callers that POST a
+      // `template` without a `name`/`description` — no locale context
+      // here, so this falls back to the English dictionary strings
+      // (the UI always sends the already-translated name/description).
+      effectiveName = effectiveName ?? automationsEn[t.nameKey as keyof typeof automationsEn]
+      effectiveDescription =
+        effectiveDescription ?? automationsEn[t.descriptionKey as keyof typeof automationsEn]
       effectiveTriggerType = effectiveTriggerType ?? t.trigger_type
       effectiveTriggerConfig = effectiveTriggerConfig ?? t.trigger_config
       effectiveSteps = t.steps as unknown as BuilderStepInput[]

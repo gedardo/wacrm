@@ -59,6 +59,16 @@ with an English-fallback default so tests keep passing unmodified):
    (screen-reader-only, never visually seen). Very low priority.
 5. Illustrative placeholder examples left as-is by design (not real UI copy): "John Doe",
    "Acme Inc." in `contact-form.tsx`, "Ada Lovelace" in `profile-form.tsx`.
+6. **`src/lib/automations/validate.ts`** — same shape as item 1, but for automations. Only
+   called **server-side** (`app/api/automations/route.ts` and `[id]/route.ts`), unlike the
+   flows version which has a client caller — translating it means threading the caller's
+   locale into the API request (e.g. an `Accept-Language` header), which is real backend
+   architecture work, not a `t()` swap. `automation-builder.tsx`'s `save()` shows
+   `issue.message` verbatim via `toast.error()`.
+7. **`src/lib/automations/engine.ts`** — the background execution engine (also server-only)
+   writes English `detail` strings onto each step result (e.g. `` `waiting ${amount} ${unit}` ``,
+   `` `branch=${yes|no}` ``). Shown as-is in the logs page's `StepRow` (`result.detail`). Same
+   server-locale blocker as item 6.
 
 ## Resolved during this pass (previously flagged, now fixed)
 
@@ -72,6 +82,23 @@ with an English-fallback default so tests keep passing unmodified):
   `inbox.ts` used "negocio" for CRM "deal". Standardized on **"negocio"** everywhere
   (matches HubSpot's Spanish locale).
 - Several components had voseo/tuteo slips ("Envía" instead of "Enviá") — fixed on sight.
+- **Automations section audit** (`src/lib/automations/trigger-meta.ts`, `templates.ts`, and
+  their consumers) had been missed entirely in the earlier pass — these are plain lib files,
+  not components, so they didn't show up in the component-focused grep sweeps:
+  - `TRIGGER_META.label` (hardcoded English trigger-type pill text on the automations list,
+    e.g. "New Message", "Tag Added") → converted to `labelKey`, new
+    `automations.triggerPillLabel.*` dictionary keys.
+  - `formatRelative()` (hardcoded "never" / "just now" / "Xm ago" etc. on both the list page
+    and the logs page) → now takes an optional `t` param (same pattern as
+    `defaultConfigFor()` in flows), new `automations.relative.*` keys. Both call sites now
+    pass `t`.
+  - `AUTOMATION_TEMPLATES` (`name`/`description` on the 4 "quick-start template" cards, plus
+    the literal message bodies seeded into a new automation when a template is picked) →
+    converted to `nameKey`/`descriptionKey`/`textKey`, new `automations.template.*` keys.
+    `new/page.tsx` now calls `useTranslation()` to resolve them when applying a template.
+    The server-side fallback in `app/api/automations/route.ts` (used only when a caller POSTs
+    `template` without `name`/`description`) falls back to the English dictionary directly,
+    since API routes have no locale context.
 
 ## If translating further
 
